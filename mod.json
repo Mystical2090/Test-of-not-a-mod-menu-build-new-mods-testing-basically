@@ -104,9 +104,9 @@
                     "default": false
                 },
                 "show-hitboxes-on-death": {
-                    "name": "show hitbox kn detah test"
-                    "type": "bool"
-                    "description": "yes yes"
+                    "name": "show hitbox kn detah test",
+                    "type": "bool",
+                    "description": "yes yes",
                     "default": "false"
                 },
         "creator": {
