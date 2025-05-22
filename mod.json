@@ -97,6 +97,12 @@
                     "description": "Instant Kills you. WARNING: Dont use noclip with this mod.",
                     "default": false
                 },
+                "show-hitboxes": {
+                    "name": "test show hitboxes",
+                    "type": "bool",
+                    "description": "test hacks.",
+                    "default": false
+                },
         "creator": {
             "type": "title",
             "name": "Creator"
