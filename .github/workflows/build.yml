@@ -1,4 +1,4 @@
-name: Build Geode Mod
+name: Build Polo
 
 on:
   workflow_dispatch:
@@ -57,7 +57,7 @@ jobs:
       - uses: geode-sdk/build-geode-mod/combine@main
         id: build
         with:
-          cli: nightly # remove once iOS finishes
+          cli: nightly
 
       - uses: actions/upload-artifact@v4
         with:
