@@ -4,7 +4,7 @@
 
 using namespace geode::prelude;
 
-class $modify(MyPlayLayer, PlayLayer) {
+class $modify(HitboxLayer, PlayLayer) {
     void destroyPlayer(PlayerObject* player, GameObject* cause) {
         PlayLayer::destroyPlayer(player, cause);
 
@@ -18,7 +18,9 @@ class $modify(MyPlayLayer, PlayLayer) {
 
         box->runAction(CCSequence::create(
             CCFadeOut::create(2.0f),
-            CCCallFunc::create([box]() { box->removeFromParent(); }),
+            CCCallFuncN::create([](CCNode* node) {
+                node->removeFromParent();
+            }),
             nullptr
         ));
 
