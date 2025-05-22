@@ -1,0 +1,27 @@
+#include <Geode/Geode.hpp>
+#include <Geode/modify/PlayLayer.hpp>
+#include <Geode/utils/cocos.hpp>
+
+using namespace geode::prelude;
+
+class $modify(MyPlayLayer, PlayLayer) {
+    void destroyPlayer(PlayerObject* player, GameObject* cause) {
+        PlayLayer::destroyPlayer(player, cause);
+
+        if (!Mod::get()->getSettingValue<bool>("show-hitbox")) return;
+
+        auto pos = player->getPosition();
+        auto size = player->getScaledContentSize();
+        auto box = CCLayerColor::create(ccc4(255, 0, 0, 120), size.width, size.height);
+        box->setPosition(pos - size / 2);
+        box->setZOrder(9999);
+
+        box->runAction(CCSequence::create(
+            CCFadeOut::create(2.0f),
+            CCCallFunc::create([box]() { box->removeFromParent(); }),
+            nullptr
+        ));
+
+        this->addChild(box);
+    }
+};
