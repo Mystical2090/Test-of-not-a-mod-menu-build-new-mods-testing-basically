@@ -12,6 +12,7 @@ protected:
                  *rgbiconslabel = nullptr;
     CCMenuItemToggler* noclipcheckbox = nullptr;
     CCSprite *rightplayerarrowbtn = nullptr, *leftplayerarrowbtn = nullptr, *rightmiscarrowbtn = nullptr, *leftmiscarrowbtn = nullptr;
+    CCLayer* m_mainLayer = nullptr;
 
     bool setup(std::string const& value) override {
         this->setTitle("Player");
@@ -20,7 +21,12 @@ protected:
         auto popupSize = this->getContentSize();
         auto winSize = CCDirector::sharedDirector()->getWinSize();
 
+        log::info("Setting up main layer");
         m_mainLayer = CCLayer::create();
+        if (!m_mainLayer) {
+            log::error("Failed to create m_mainLayer");
+            return false;
+        }
         this->addChild(m_mainLayer);
 
         auto label = CCLabelBMFont::create("Polo v1.0.0", "goldFont.fnt");
@@ -42,10 +48,16 @@ protected:
         showtrajectorylabel = createLabel("Show Trajectory", { layoutmodelabel->getPositionX(), layoutmodelabel->getPositionY() + 80.f });
         rgbiconslabel = createLabel("Rgb Icons", { layoutmodelabel->getPositionX(), layoutmodelabel->getPositionY() + 120.f });
 
-        // noclip checkbox
         bool noclipEnabled = Mod::get()->getSavedValue<bool>("enable-noclip", false);
+        log::info("Loaded noclip state: {}", noclipEnabled);
+
         auto checkboxOff = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
         auto checkboxOn = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
+        if (!checkboxOff || !checkboxOn) {
+            log::error("Failed to load checkbox sprites");
+            return false;
+        }
+
         noclipcheckbox = CCMenuItemToggler::create(checkboxOff, checkboxOn, this, menu_selector(MyPopup::onNoclipCheckbox));
         noclipcheckbox->setPosition(jumphacklabel->getPositionX() + 95.f, jumphacklabel->getPositionY() + 60.f);
         noclipcheckbox->setScale(0.9f);
@@ -58,7 +70,6 @@ protected:
 
         this->addChild(menu);
 
-        // hide misc elements initially
         toggleMiscVisibility(false);
 
         return true;
@@ -66,6 +77,10 @@ protected:
 
     CCLabelBMFont* createLabel(const std::string& text, const CCPoint& pos) {
         auto label = CCLabelBMFont::create(text.c_str(), "bigFont.fnt");
+        if (!label) {
+            log::error("Failed to create label: {}", text);
+            return nullptr;
+        }
         label->setScale(0.5f);
         label->setColor({255, 255, 255});
         label->setZOrder(1);
@@ -76,18 +91,22 @@ protected:
     }
 
     void toggleMiscVisibility(bool visible) {
-        layoutmodelabel->setVisible(visible);
-        practicemusichacklabel->setVisible(visible);
-        instantrespawnlabel->setVisible(visible);
-        speedhacklabel->setVisible(visible);
-        iconhacklabel->setVisible(visible);
-        colorhacklabel->setVisible(visible);
-        rgbiconslabel->setVisible(visible);
-        showtrajectorylabel->setVisible(visible);
+        if (layoutmodelabel) layoutmodelabel->setVisible(visible);
+        if (practicemusichacklabel) practicemusichacklabel->setVisible(visible);
+        if (instantrespawnlabel) instantrespawnlabel->setVisible(visible);
+        if (speedhacklabel) speedhacklabel->setVisible(visible);
+        if (iconhacklabel) iconhacklabel->setVisible(visible);
+        if (colorhacklabel) colorhacklabel->setVisible(visible);
+        if (rgbiconslabel) rgbiconslabel->setVisible(visible);
+        if (showtrajectorylabel) showtrajectorylabel->setVisible(visible);
     }
 
     void onNoclipCheckbox(cocos2d::CCObject* sender) {
         auto checkbox = static_cast<CCMenuItemToggler*>(sender);
+        if (!checkbox) {
+            log::error("onNoclipCheckbox called with invalid sender");
+            return;
+        }
         bool toggled = checkbox->isToggled();
         Mod::get()->setSavedValue("enable-noclip", toggled);
         log::info("Toggled noclip: {}", toggled ? "ON" : "OFF");
