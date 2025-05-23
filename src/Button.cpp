@@ -36,7 +36,7 @@ void PauseWithImageButton::customSetup() {
 }
 
 void PauseWithImageButton::onSettingsButton(cocos2d::CCObject*) {
-    	geode::openSettingsPopup(Mod::get(), true);
+    geode::openSettingsPopup(Mod::get(), true);
 }
 
 class $modify(MainMenuWithImageButton, MenuLayer) {
@@ -70,5 +70,11 @@ bool MainMenuWithImageButton::init() {
 }
 
 void MainMenuWithImageButton::onSettingsButton(cocos2d::CCObject*) {
-    MyPopup::create("MyPopup")->show();
+    log::info("Opening MyPopup from main menu...");
+    if (auto popup = MyPopup::create("MyPopup")) {
+        popup->show();
+        log::info("Popup created and shown.");
+    } else {
+        log::error("Failed to create MyPopup — popup is null.");
+    }
 }
